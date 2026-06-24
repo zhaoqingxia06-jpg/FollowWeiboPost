@@ -431,27 +431,38 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.4; cursor: po
 .results.show { display: block; }
 
 /* ===== FETCH LOADING ===== */
-#fetchLoading {
-    display: none;
-    text-align: center;
-    padding: 48px 0 40px;
-    color: var(--muted);
-    font-size: 13px;
-    pointer-events: none;
-}
-#fetchLoading.show { display: block; }
-.fetch-spinner {
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--accent-soft);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin360 0.75s linear infinite;
-    vertical-align: middle;
-    margin-right: 8px;
-    flex-shrink: 0;
-}
+#fetchLoading { display:none; padding:32px 0 28px; text-align:center; user-select:none; }
+#fetchLoading.show { display:block; }
+.fetch-dots { display:inline-flex; gap:7px; align-items:flex-end; height:28px; margin-bottom:8px; }
+.fetch-dots span { display:block; width:9px; height:9px; border-radius:50%; animation:dot-wave 1.1s ease-in-out infinite; }
+.fetch-dots span:nth-child(1){animation-delay:0s;   background:var(--accent);}
+.fetch-dots span:nth-child(2){animation-delay:.15s; background:var(--accent-deep);}
+.fetch-dots span:nth-child(3){animation-delay:.30s; background:var(--accent);}
+.fetch-dots span:nth-child(4){animation-delay:.45s; background:var(--accent-deep);}
+.fetch-dots span:nth-child(5){animation-delay:.60s; background:var(--accent);}
+@keyframes dot-wave{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-12px);opacity:1}}
+.fetch-sub{font-size:12px;color:var(--muted-2);margin-bottom:18px;}
+.puzzle-card{max-width:420px;margin:0 auto;padding:0 8px;text-align:left;pointer-events:auto;animation:fade-in .35s ease;}
+.puzzle-badge{display:inline-flex;align-items:center;font-size:10px;font-weight:600;color:var(--accent-deep);margin-bottom:8px;}
+.puzzle-q{font-size:13px;font-weight:600;color:var(--ink);line-height:1.7;margin-bottom:6px;white-space:pre-line;}
+.puzzle-hint{font-size:12px;color:var(--muted-2);margin-bottom:12px;line-height:1.5;}
+.puzzle-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.puzzle-reveal{font-family:var(--font);font-size:11px;font-weight:600;color:var(--accent-deep);background:transparent;border:1px solid var(--accent-soft);border-radius:var(--radius-pill);padding:4px 14px;cursor:pointer;transition:background .15s;}
+.puzzle-reveal:hover{background:var(--accent-light);}
+.puzzle-cd{font-size:11px;color:var(--muted-2);}
+.puzzle-ans{display:none;margin-top:10px;padding:8px 0 0;border-top:1px solid var(--border-2);animation:fade-in .2s ease;}
+.puzzle-ans.show{display:block;}
+.puzzle-ans-lbl{font-size:10px;font-weight:600;color:var(--accent-deep);margin-bottom:4px;}
+.puzzle-ans-val{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.puzzle-ans-exp{font-size:12px;color:var(--muted);line-height:1.5;}
+.diff-wrap{display:flex;gap:20px;margin-bottom:14px;justify-content:center;}
+.diff-side{text-align:center;}
+.diff-grid{display:grid;gap:2px;padding:8px;background:var(--surface-2);border-radius:var(--radius-sm);border:1.5px solid var(--border-2);font-size:20px;line-height:1.3;}
+.diff-grid .dc{display:inline-block;padding:2px 3px;border-radius:4px;transition:background .2s;cursor:pointer;}
+.diff-grid .dc:hover{background:var(--accent-light);}
+.diff-grid .dc.hi{background:rgba(200,112,112,.28);}
+.diff-grid .dc.correct{background:rgba(100,200,100,.3);}
+.diff-lbl{font-size:10px;color:var(--muted-2);margin-top:5px;font-weight:500;}
 
 .result-tabs {
     display: flex;
@@ -601,6 +612,122 @@ tbody tr:hover { background: var(--surface-2); }
 
 .col-link a { font-size: 11px; color: var(--accent-deep); text-decoration: none; font-weight: 500; }
 .col-link a:hover { text-decoration: underline; }
+
+/* ===== MEDIA COLUMN ===== */
+.col-media { width: 80px; min-width: 72px; }
+.thumb-grid { display: flex; flex-wrap: wrap; gap: 4px; max-width: 76px; }
+.thumb-img {
+    width: 60px; height: 60px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    cursor: zoom-in;
+    border: 1px solid var(--border-2);
+    transition: opacity 0.15s, transform 0.15s;
+    background: var(--surface-3);
+}
+.thumb-img:hover { opacity: 0.85; transform: scale(1.05); }
+.thumb-more {
+    width: 60px; height: 60px;
+    display: grid; place-items: center;
+    background: var(--surface-3);
+    border-radius: var(--radius-sm);
+    font-size: 11px; font-weight: 600;
+    color: var(--muted);
+    border: 1px solid var(--border-2);
+    cursor: pointer;
+}
+.thumb-placeholder {
+    width: 60px; height: 60px;
+    display: grid; place-items: center;
+    background: var(--surface-3);
+    border-radius: var(--radius-sm);
+    font-size: 10px; color: var(--muted-2);
+    border: 1px dashed var(--border-2);
+    user-select: none;
+}
+.video-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10px; font-weight: 600;
+    color: var(--accent-deep);
+    background: var(--accent-light);
+    border: 1px solid var(--accent-soft);
+    padding: 2px 7px;
+    border-radius: var(--radius-pill);
+    margin-top: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.video-badge:hover { background: var(--accent-soft); }
+
+/* Lightbox */
+#lightbox {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+    transition: background 0.22s ease;
+}
+#lightbox.show { display: flex; background: rgba(0,0,0,0.82); backdrop-filter: blur(6px); }
+#lightbox-img-wrap {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    cursor: default;
+}
+#lightbox img {
+    max-width: 88vw; max-height: 88vh;
+    object-fit: contain;
+    border-radius: var(--radius);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    cursor: default;
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    display: block;
+}
+#lightbox img.lb-visible {
+    opacity: 1;
+    transform: scale(1);
+}
+#lightbox-close {
+    position: fixed; top: 18px; right: 22px;
+    font-size: 28px; color: #fff;
+    cursor: pointer; line-height: 1;
+    opacity: 0.7; transition: opacity 0.15s;
+    background: none; border: none;
+    font-family: var(--font);
+    z-index: 10001;
+}
+#lightbox-close:hover { opacity: 1; }
+.lb-nav {
+    position: fixed;
+    top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.12);
+    border: none; color: #fff;
+    font-size: 22px; line-height: 1;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: background 0.15s, opacity 0.15s;
+    z-index: 10001;
+    backdrop-filter: blur(4px);
+}
+.lb-nav:hover { background: rgba(255,255,255,0.25); }
+.lb-nav:disabled { opacity: 0.2; cursor: default; pointer-events: none; }
+#lb-prev { left: 18px; }
+#lb-next { right: 18px; }
+.lb-counter {
+    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+    color: rgba(255,255,255,0.6); font-size: 12px;
+    background: rgba(0,0,0,0.35); padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    pointer-events: none;
+    z-index: 10001;
+}
 
 .new-badge {
     display: inline-block;
@@ -893,11 +1020,26 @@ tbody tr.row-new:hover { background: #D8EDD8; }
     </div>
 
     <div id="fetchLoading" aria-live="polite" aria-label="加载中">
-        <span class="fetch-spinner" aria-hidden="true"></span>获取中，请稍候…
+        <div class="fetch-dots" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="fetch-sub" id="fetchMsg"></div>
+        <div id="puzzleCard"></div>
     </div>
     <section class="results" id="results" aria-live="polite"></section>
 
-    <section class="compare-view" id="compareView">
+<!-- Lightbox -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="图片预览">
+    <button id="lightbox-close" aria-label="关闭">×</button>
+    <button class="lb-nav" id="lb-prev" aria-label="上一张">‹</button>
+    <div id="lightbox-img-wrap">
+        <img id="lightbox-img" src="" alt="预览图">
+    </div>
+    <button class="lb-nav" id="lb-next" aria-label="下一张">›</button>
+    <div class="lb-counter" id="lb-counter"></div>
+</div>
+
+        <section class="compare-view" id="compareView">
         <div id="compareContent" style="padding:0;"></div>
     </section>
 </main>
@@ -1057,7 +1199,7 @@ tbody tr.row-new:hover { background: #D8EDD8; }
             const maxCmt = Math.max(1, ...ws.map(w => Number(w.comment_num) || 0));
             const rows = ws.map((w, wi) => {
                 const isNew = w._is_new === true;
-                const link = w.id ? '<a href="https://weibo.cn/comment/' + esc(w.id) + '" target="_blank" rel="noopener">查看 ↗</a>' : '—';
+                const link = w.id ? '<a href="https://weibo.com/' + esc(w.user_id || '') + '/' + esc(w.id) + '" target="_blank" rel="noopener">查看 ↗</a>' : '—';
                 const contentAttr = 'data-content="' + esc(w.content || '') + '" data-weibo-id="' + esc(w.id || '') + '" data-idx="' + wi + '"';
                 const newBadge = isNew ? '<span class="new-badge">NEW</span>' : '';
                 const summaryCell = '<td class="col-summary sum-pending" ' + contentAttr + '><span class="sum-loading">…</span></td>';
@@ -1070,10 +1212,11 @@ tbody tr.row-new:hover { background: #D8EDD8; }
                         metricRow('fwd','⇄',w.retweet_num,maxFwd) +
                         metricRow('cmt','●',w.comment_num,maxCmt) +
                     '</div></td>' +
+                    '<td class="col-media">' + buildMediaCell(w) + '</td>' +
                     '<td class="col-link">' + link + '</td></tr>';
             }).join('');
             body = '<div class="table-scroll"><table>' +
-                '<thead><tr><th>时间</th><th>内容</th><th>摘要</th><th>互动</th><th>链接</th></tr></thead>' +
+                '<thead><tr><th>时间</th><th>内容</th><th>摘要</th><th>互动</th><th>图片</th><th>链接</th></tr></thead>' +
                 '<tbody>' + rows + '</tbody></table></div>';
         }
         const panel = document.createElement('div');
@@ -1156,7 +1299,7 @@ tbody tr.row-new:hover { background: #D8EDD8; }
         newWeibos.forEach((w, wi) => {
             const tr = document.createElement('tr');
             tr.className = 'row-new';
-            const link = w.id ? '<a href="https://weibo.cn/comment/' + esc(w.id) + '" target="_blank" rel="noopener">查看 ↗</a>' : '—';
+            const link = w.id ? '<a href="https://weibo.com/' + esc(w.user_id || '') + '/' + esc(w.id) + '" target="_blank" rel="noopener">查看 ↗</a>' : '—';
             const ca = 'data-content="' + esc(w.content || '') + '" data-weibo-id="' + esc(w.id || '') + '" data-idx="a' + wi + '"';
             tr.innerHTML =
                 '<td class="col-time">' + esc(w.publish_time) + '</td>' +
@@ -1167,6 +1310,7 @@ tbody tr.row-new:hover { background: #D8EDD8; }
                     metricRow('fwd','⇄',w.retweet_num,maxFwd) +
                     metricRow('cmt','●',w.comment_num,maxCmt) +
                 '</div></td>' +
+                '<td class="col-media">' + buildMediaCell(w) + '</td>' +
                 '<td class="col-link">' + link + '</td>';
             tbody.appendChild(tr);
             if (w.id) panel.weiboIds.add(w.id);
@@ -1181,6 +1325,81 @@ tbody tr.row-new:hover { background: #D8EDD8; }
 
         const btn = $('fetchBtn');
         btn.disabled = true;
+        // 启动趣味文案轮播
+        const _funMsgs = [
+        ];
+        const _PB = [
+            {type:'riddle',badge:'🔤 猜字谜',question:'一口咬掉牛尾巴，打一字',hint:'提示：汉字拆解组合',answer:'告',explain:'"告"：牛字去掉最后一笔，下面加"口"'},
+            {type:'riddle',badge:'🔤 猜字谜',question:'两人土上坐，打一字',hint:'提示：描述字的构成',answer:'坐',explain:'"坐"由两个"人"和一个"土"组成'},
+            {type:'riddle',badge:'🔤 猜字谜',question:'一人背一人，打一字',hint:'提示：两个人背靠背',answer:'北',explain:'"北"字左右各一个人形，一正一反背靠背'},
+            {type:'riddle',badge:'🔤 猜字谜',question:'有水可养鱼虾\n有土可种庄稼\n有人不是你我\n有马走遍天下\n打一字',hint:'提示：加不同偏旁变不同字',answer:'也',explain:'水+也=池，土+也=地，人+也=他，马+也=驰'},
+            {type:'brainstorm',badge:'💡 脑筋急转弯',question:'什么东西越洗越脏？',answer:'水',explain:'水越用来洗东西，水本身越来越脏了！'},
+            {type:'brainstorm',badge:'💡 脑筋急转弯',question:'小明的妈妈有3个孩子：\n老大叫大毛，老二叫二毛，\n老三叫什么？',answer:'小明',explain:'题目说"小明的妈妈"，第三个当然是小明！'},
+            {type:'brainstorm',badge:'💡 脑筋急转弯',question:'一间房点着3根蜡烛，\n吹灭1根，最后剩几根？',answer:'3根',explain:'吹灭的没消失，只是不燃烧了，还是3根'},
+            {type:'brainstorm',badge:'💡 脑筋急转弯',question:'什么书天天看，却永远看不完？',answer:'日历',explain:'日历每天翻，但每年都有新的365页'},
+            {type:'logic',badge:'🧩 逻辑推理',question:'父亲今年45岁，儿子15岁。\n几年后，父亲年龄是儿子的2倍？',hint:'设x年后：45+x = 2×(15+x)',answer:'15年后',explain:'15年后父60岁、儿30岁，60=2×30 ✓'},
+            {type:'logic',badge:'🧩 逻辑推理',question:'1只猫1分钟抓1只老鼠。\n100只猫100分钟能抓多少只？',hint:'多猫同时工作，互不影响',answer:'10000只',explain:'100只猫×100分钟=10000只'},
+            {type:'spot_diff',badge:'👀 找不同',question:'左右各有12个表情，有1处不同\n点击右图中不同的那格 🎯',cols:4,
+             left:['🍎','🍊','🍋','🍇','🍓','🫐','🍑','🍒','🍍','🥭','🍈','🍌'],
+             right:['🍎','🍊','🍋','🍇','🍓','🫐','🍑','🍒','🍍','🥭','🍈','🥝'],
+             diffIdx:11,answer:'第3行第4列是🥝',explain:'左图最后是🍌香蕉，右图换成了🥝猕猴桃'},
+            {type:'spot_diff',badge:'👀 找不同',question:'左右各有12个表情，有1处不同\n点击右图中不同的那格 🎯',cols:4,
+             left:['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮'],
+             right:['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐧','🐯','🦁','🐮'],
+             diffIdx:8,answer:'第3行第1列是🐧',explain:'左图第9个是🐨考拉，右图换成了🐧企鹅'},
+        ];
+        const _pz = _PB[Math.floor(Math.random() * _PB.length)];
+        (function() {
+            let h = '<div class="puzzle-card">';
+            h += '<div class="puzzle-badge">' + _pz.badge + '</div>';
+            h += '<div class="puzzle-q">' + esc(_pz.question) + '</div>';
+            if (_pz.type === 'spot_diff') {
+                h += '<div class="diff-wrap">';
+                ['left','right'].forEach(function(s) {
+                    h += '<div class="diff-side"><div class="diff-grid" id="diff-'+s+'" style="grid-template-columns:repeat('+_pz.cols+',1fr)">';
+                    _pz[s].forEach(function(em,i){ h += '<span class="dc" data-i="'+i+'">'+em+'</span>'; });
+                    h += '</div><div class="diff-lbl">'+(s==='left'?'图 A':'图 B')+'</div></div>';
+                });
+                h += '</div>';
+            } else if (_pz.hint) {
+                h += '<div class="puzzle-hint">'+esc(_pz.hint)+'</div>';
+            }
+            h += '<div class="puzzle-foot"><button class="puzzle-reveal" id="_pRev" type="button">揭晓答案</button><span class="puzzle-cd" id="_pCd">15秒后自动揭晓</span></div>';
+            h += '<div class="puzzle-ans" id="_pAns"><div class="puzzle-ans-lbl">✓ 答案揭晓</div>';
+            h += '<div class="puzzle-ans-val">'+esc(_pz.answer)+'</div>';
+            h += '<div class="puzzle-ans-exp">'+esc(_pz.explain)+'</div></div></div>';
+            $('puzzleCard').innerHTML = h;
+        })();
+        $('fetchMsg').textContent = '数据加载中，来做道小题打发时间吧～';
+        let _pzDone = false;
+        function _revPz() {
+            if (_pzDone) return; _pzDone = true;
+            const a=$('_pAns'),c=$('_pCd'),r=$('_pRev');
+            if(a) a.classList.add('show');
+            if(c) c.style.display='none';
+            if(r) r.style.display='none';
+            if(_pz.type==='spot_diff'){
+                const rg=document.getElementById('diff-right');
+                if(rg){const cs=rg.querySelectorAll('.dc');if(cs[_pz.diffIdx])cs[_pz.diffIdx].classList.add('hi');}
+            }
+        }
+        const _rBtn=document.getElementById('_pRev');
+        if(_rBtn) _rBtn.addEventListener('click',_revPz);
+        if(_pz.type==='spot_diff'){
+            const _rg=document.getElementById('diff-right');
+            if(_rg) _rg.addEventListener('click',function(e){
+                const dc=e.target.closest('.dc'); if(!dc) return;
+                const idx=parseInt(dc.dataset.i,10);
+                if(idx===_pz.diffIdx){dc.classList.add('correct');_revPz();}
+                else{dc.style.background='rgba(200,112,112,.15)';setTimeout(function(){dc.style.background='';},600);}
+            });
+        }
+        let _pzSec=15;
+        const _pzTimer=setInterval(function(){
+            _pzSec--;
+            const c=document.getElementById('_pCd');if(c)c.textContent=_pzSec+'秒后自动揭晓';
+            if(_pzSec<=0){clearInterval(_pzTimer);_revPz();}
+        },1000);
         $('fetchLoading').classList.add('show');
         const targets = monitors.slice();
         let totalNewCount = 0, failed = 0, panelsAdded = 0;
@@ -1270,7 +1489,9 @@ tbody tr.row-new:hover { background: #D8EDD8; }
         if (failed > 0) msg += '，' + failed + ' 个失败';
         statusEl.textContent = msg;
         statusEl.className = failed > 0 ? 'status error' : 'status';
+        clearInterval(_pzTimer);
         $('fetchLoading').classList.remove('show');
+        $('puzzleCard').innerHTML = '';
         btn.disabled = false;
         loadAllSummaries();
     }
@@ -1298,6 +1519,150 @@ tbody tr.row-new:hover { background: #D8EDD8; }
             td.innerHTML = (data.success && data.summary) ? renderSummary(data.summary) : '<span style="color:var(--muted-2);font-size:11px;">—</span>';
         } catch (e) { td.innerHTML = '<span style="color:var(--muted-2);font-size:11px;">—</span>'; }
     }
+
+    // ===== 图片/视频单元格构建 =====
+    // video_url 后端无视频时返回 '无'，需过滤掉非 URL 值
+    function _isValidVideoUrl(v) {
+        if (!v || typeof v !== 'string') return false;
+        const s = v.trim();
+        return s.length > 0 && s !== '无' && s !== 'null' && s !== 'undefined' && /^https?:\/\//i.test(s);
+    }
+
+    function buildMediaCell(w) {
+        // original_pictures_list 是已解析的数组；original_pictures 是逗号分隔字符串作为兜底
+        let pics = [];
+        if (Array.isArray(w.original_pictures_list) && w.original_pictures_list.length > 0) {
+            pics = w.original_pictures_list.filter(Boolean);
+        } else if (w.original_pictures && w.original_pictures !== '无') {
+            pics = w.original_pictures.split(',').map(s => s.trim()).filter(Boolean);
+        }
+        const video = _isValidVideoUrl(w.video_url) ? w.video_url.trim() : '';
+        if (pics.length === 0 && !video) {
+            return '<div class="thumb-placeholder">无图片</div>';
+        }
+        let html = '<div class="thumb-grid">';
+        const MAX_SHOW = 3;
+        pics.slice(0, MAX_SHOW).forEach(url => {
+            const proxyUrl = '/api/img_proxy?url=' + encodeURIComponent(url);
+            html += '<img class="thumb-img" loading="lazy" src="' + proxyUrl + '" alt="帖子图片" data-src="' + esc(url) + '" onerror="this.style.display=\'none\'">';
+        });
+        if (pics.length > MAX_SHOW) {
+            html += '<div class="thumb-more" data-pics=\'' + JSON.stringify(pics).replace(/'/g, '&#39;') + '\'>+' + (pics.length - MAX_SHOW) + '</div>';
+        }
+        html += '</div>';
+        if (video) {
+            html += '<a class="video-badge" href="' + esc(video) + '" target="_blank" rel="noopener">▶ 视频</a>';
+        }
+        return html;
+    }
+
+    // ===== Lightbox =====
+    (function() {
+        const lb      = document.getElementById('lightbox');
+        const lbImg   = document.getElementById('lightbox-img');
+        const lbClose = document.getElementById('lightbox-close');
+        const lbPrev  = document.getElementById('lb-prev');
+        const lbNext  = document.getElementById('lb-next');
+        const lbCounter = document.getElementById('lb-counter');
+
+        let _allPics = [];   // 当前行的所有原始图片 URL
+        let _curIdx  = 0;
+
+        function toProxy(url) {
+            if (!url) return url;
+            if (url.startsWith('/api/img_proxy')) return url;
+            return '/api/img_proxy?url=' + encodeURIComponent(url);
+        }
+
+        function preload(url) {
+            if (!url) return;
+            const i = new Image(); i.src = toProxy(url);
+        }
+
+        function showImg(idx) {
+            _curIdx = idx;
+            const url = toProxy(_allPics[idx]);
+            // 淡出 → 换图 → 淡入
+            lbImg.classList.remove('lb-visible');
+            setTimeout(() => {
+                lbImg.src = url;
+                lbImg.onload = () => lbImg.classList.add('lb-visible');
+                lbImg.onerror = () => lbImg.classList.add('lb-visible');
+            }, 160);
+            lbPrev.disabled = idx === 0;
+            lbNext.disabled = idx === _allPics.length - 1;
+            lbCounter.textContent = (idx + 1) + ' / ' + _allPics.length;
+            lbCounter.style.display = _allPics.length > 1 ? '' : 'none';
+            // 预加载相邻图片
+            preload(_allPics[idx - 1]);
+            preload(_allPics[idx + 1]);
+        }
+
+        function openLightbox(pics, startIdx) {
+            _allPics = Array.isArray(pics) ? pics : [pics];
+            lb.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            lbImg.classList.remove('lb-visible');
+            lbImg.src = '';
+            showImg(Math.max(0, Math.min(startIdx || 0, _allPics.length - 1)));
+        }
+
+        function closeLightbox() {
+            lbImg.classList.remove('lb-visible');
+            setTimeout(() => {
+                lb.classList.remove('show');
+                lbImg.src = '';
+                document.body.style.overflow = '';
+            }, 180);
+        }
+
+        lb.addEventListener('click', e => {
+            if (e.target === lb) closeLightbox();
+        });
+        lbClose.addEventListener('click', closeLightbox);
+        lbPrev.addEventListener('click', e => { e.stopPropagation(); if (_curIdx > 0) showImg(_curIdx - 1); });
+        lbNext.addEventListener('click', e => { e.stopPropagation(); if (_curIdx < _allPics.length - 1) showImg(_curIdx + 1); });
+
+        document.addEventListener('keydown', e => {
+            if (!lb.classList.contains('show')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft'  && _curIdx > 0) showImg(_curIdx - 1);
+            if (e.key === 'ArrowRight' && _curIdx < _allPics.length - 1) showImg(_curIdx + 1);
+        });
+
+        // 事件委托：监听缩略图点击
+        document.addEventListener('click', e => {
+            const img = e.target.closest('.thumb-img');
+            if (img) {
+                // 收集同一行所有图片
+                const grid = img.closest('.thumb-grid');
+                let pics = [];
+                let clickedIdx = 0;
+                if (grid) {
+                    const allImgs = grid.querySelectorAll('.thumb-img');
+                    // 还原完整列表（包括 +N 折叠的）
+                    const moreEl = grid.querySelector('.thumb-more');
+                    const morePics = moreEl ? (() => { try { return JSON.parse(moreEl.dataset.pics); } catch(e) { return []; } })() : [];
+                    allImgs.forEach((el, i) => {
+                        pics.push(el.dataset.src || el.src);
+                        if (el === img) clickedIdx = i;
+                    });
+                    pics = pics.concat(morePics);
+                } else {
+                    pics = [img.dataset.src || img.src];
+                }
+                openLightbox(pics, clickedIdx);
+                return;
+            }
+            const more = e.target.closest('.thumb-more');
+            if (more) {
+                try {
+                    const pics = JSON.parse(more.dataset.pics);
+                    if (pics && pics.length) openLightbox(pics, 0);
+                } catch(err) {}
+            }
+        });
+    })();
 
     function loadAllSummaries() {
         document.querySelectorAll('.sum-pending').forEach(td => { td.classList.remove('sum-pending'); loadSummaryForCell(td); });

@@ -852,6 +852,29 @@ def api_compare():
     })
 
 
+@app.route('/api/img_proxy')
+def api_img_proxy():
+    """图片代理：绕过新浪 CDN 防盗链，以 weibo.com 作为 Referer 获取图片"""
+    url = request.args.get('url', '').strip()
+    if not url or not url.startswith('http'):
+        return '', 400
+    try:
+        req = urllib.request.Request(
+            url,
+            headers={
+                'Referer': 'https://weibo.com/',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            }
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = resp.read()
+            content_type = resp.headers.get('Content-Type', 'image/jpeg')
+        from flask import Response
+        return Response(data, content_type=content_type)
+    except Exception:
+        return '', 404
+
+
 def load_cookie():
     """从 config.json 读取 cookie"""
     try:
