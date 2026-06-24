@@ -17,6 +17,7 @@ import sys
 import threading
 import time
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from flask import Flask, jsonify, request, send_from_directory
 
@@ -852,12 +853,43 @@ def api_compare():
     })
 
 
+# 图片代理内存缓存：最多缓存200张，超出时清除最旧的50条
+_IMG_CACHE = {}          # { url: (content_type, data) }
+_IMG_CACHE_KEYS = []     # 插入顺序
+_IMG_CACHE_MAX = 200
+_img_cache_lock = threading.Lock()
+
+
+def _img_cache_get(url):
+    with _img_cache_lock:
+        return _IMG_CACHE.get(url)
+
+
+def _img_cache_set(url, content_type, data):
+    with _img_cache_lock:
+        if url in _IMG_CACHE:
+            return
+        _IMG_CACHE[url] = (content_type, data)
+        _IMG_CACHE_KEYS.append(url)
+        if len(_IMG_CACHE_KEYS) > _IMG_CACHE_MAX:
+            evict = _IMG_CACHE_KEYS[:50]
+            for k in evict:
+                _IMG_CACHE.pop(k, None)
+            del _IMG_CACHE_KEYS[:50]
+
+
 @app.route('/api/img_proxy')
 def api_img_proxy():
-    """图片代理：绕过新浪 CDN 防盗链，以 weibo.com 作为 Referer 获取图片"""
+    """图片代理：绕过新浪 CDN 防盗链，以 weibo.com 作为 Referer 获取图片（带内存缓存）"""
+    from flask import Response
     url = request.args.get('url', '').strip()
     if not url or not url.startswith('http'):
         return '', 400
+    cached = _img_cache_get(url)
+    if cached:
+        content_type, data = cached
+        return Response(data, content_type=content_type,
+                        headers={'Cache-Control': 'public, max-age=86400'})
     try:
         req = urllib.request.Request(
             url,
@@ -869,8 +901,9 @@ def api_img_proxy():
         with urllib.request.urlopen(req, timeout=10) as resp:
             data = resp.read()
             content_type = resp.headers.get('Content-Type', 'image/jpeg')
-        from flask import Response
-        return Response(data, content_type=content_type)
+        _img_cache_set(url, content_type, data)
+        return Response(data, content_type=content_type,
+                        headers={'Cache-Control': 'public, max-age=86400'})
     except Exception:
         return '', 404
 
@@ -886,4 +919,4 @@ def load_cookie():
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000, debug=False)
+    app.run(host='127.0.0.1', port=5000, debug=False, threaded=True)

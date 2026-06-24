@@ -1409,19 +1409,19 @@ tbody tr.row-new:hover { background: #D8EDD8; }
             return tabs[i] && tabs[i].classList.contains('active');
         });
 
-        for (let i = 0; i < targets.length; i++) {
-            const m = targets[i];
-            statusEl.innerHTML = '<span class="spinner" aria-hidden="true"></span>' +
-                esc(m.name || m.id) + ' (' + (i+1) + '/' + targets.length + ')';
-            try {
-                const data = await fetchOne(m.id);
+        // 并发抓取所有监控对象，后端 threaded=True 可同时处理多个请求
+        statusEl.innerHTML = '<span class="spinner" aria-hidden="true"></span>并发抓取 ' + targets.length + ' 个账号…';
+        const fetchResults = await Promise.allSettled(targets.map(m => fetchOne(m.id).then(data => ({ m, data })).catch(err => { throw { m, err }; })));
+
+        for (const result of fetchResults) {
+            if (result.status === 'fulfilled') {
+                const { m, data } = result.value;
                 const nickname = (data.user && data.user.nickname) || m.name || ('ID ' + m.id);
                 const midx = monitors.findIndex(x => x.id === m.id);
                 if (midx !== -1 && data.user && data.user.nickname) monitors[midx].name = data.user.nickname;
 
                 const existing = resultPanels.find(p => p.id === m.id);
                 if (existing) {
-                    // 追加模式：过滤已展示的帖子
                     const allWeibos = data.weibos || [];
                     const deduped = allWeibos.filter(w => !w.id || !existing.weiboIds.has(w.id));
                     if (deduped.length > 0) {
@@ -1436,7 +1436,6 @@ tbody tr.row-new:hover { background: #D8EDD8; }
                         ? nickname + ' (+' + deduped.length + '/' + total + ')'
                         : nickname + ' (' + total + ')';
                 } else {
-                    // 新面板
                     const ws = data.weibos || [];
                     const weiboIds = new Set(ws.map(w => w.id).filter(Boolean));
                     const newCount = data.new_count || 0;
@@ -1448,14 +1447,16 @@ tbody tr.row-new:hover { background: #D8EDD8; }
                     totalNewCount += totalCnt;
                     panelsAdded++;
                 }
-            } catch (e) {
+            } else {
                 failed++;
-                if (!resultPanels.find(p => p.id === m.id)) {
+                const { m, err } = result.reason || {};
+                const mon = m || {};
+                if (!resultPanels.find(p => p.id === mon.id)) {
                     const node = document.createElement('div');
                     node.className = 'result-panel';
-                    node.innerHTML = '<div class="user-bar"><span class="name">' + esc(m.name || m.id) + '</span>' +
-                        '<span class="stat" style="color:var(--danger)">失败：' + esc(e.message) + '</span></div>';
-                    resultPanels.push({ id: m.id, label: (m.name || m.id) + ' (失败)', ok: false, node, weiboIds: new Set() });
+                    node.innerHTML = '<div class="user-bar"><span class="name">' + esc(mon.name || mon.id || '未知') + '</span>' +
+                        '<span class="stat" style="color:var(--danger)">失败：' + esc((err && err.message) || '请求失败') + '</span></div>';
+                    resultPanels.push({ id: mon.id, label: (mon.name || mon.id || '未知') + ' (失败)', ok: false, node, weiboIds: new Set() });
                     panelsAdded++;
                 }
             }
