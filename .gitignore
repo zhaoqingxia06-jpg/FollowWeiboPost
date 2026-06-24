@@ -6,6 +6,10 @@ web_app/weibo_cache.json
 web_app/summary_cache.json
 web_app/*.tmp
 
+# 用户数据输出（抓取的帖子/图片/CSV，不属于代码仓库）
+weibo/
+*.log
+
 # Python
 __pycache__/
 *.py[cod]
