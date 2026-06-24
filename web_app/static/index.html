@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FollowWeiboPost</title>
+<style>
+/* ============================================================
+   FOLLOWWEIBOPOST — SOFT MINIMAL DESIGN SYSTEM
+   Sage green · airy white · generous radius · feather shadows
+   ============================================================ */
+:root {
+    --bg:           #ECEEED;
+    --surface:      #FFFFFF;
+    --surface-2:    #FAFAFA;
+    --surface-3:    #F4F6F4;
+    --surface-4:    #ECEEED;
+    --ink:          #1A1E1A;
+    --ink-2:        #383E38;
+    --muted:        #808C80;
+    --muted-2:      #B0BCB0;
+    --accent:       #8EAF8E;
+    --accent-deep:  #628A62;
+    --accent-soft:  #C4D9C4;
+    --accent-light: #EDF4ED;
+    --danger:       #A85050;
+    --danger-light: #FAF1F0;
+    --amber:        #9A7530;
+    --amber-light:  #FAF3E4;
+    --border:       rgba(0, 0, 0, 0);
+    --border-2:     rgba(0, 0, 0, 0.07);
+    --shadow-xs:    0 2px 10px rgba(0, 0, 0, 0.06);
+    --shadow-sm:    0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+    --shadow-md:    0 8px 32px rgba(0, 0, 0, 0.10), 0 2px 6px rgba(0, 0, 0, 0.05);
+    --radius-sm:    14px;
+    --radius:       22px;
+    --radius-lg:    28px;
+    --radius-pill:  999px;
+    --sidebar-w:    272px;
+    --font: -apple-system, "SF Pro Text", "Helvetica Neue", Helvetica, Arial,
+            "PingFang SC", "Microsoft YaHei", sans-serif;
+    --font-mono: "SF Mono", "Fira Code", "Courier New", monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+}
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow: hidden;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+}
+.sidebar.collapsed { width: 56px; }
+
+.sidebar.collapsed .sidebar-title,
+.sidebar.collapsed .sidebar-subtitle,
+.sidebar.collapsed .sidebar-fetch,
+.sidebar.collapsed .sidebar-monitors {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s ease;
+}
+.sidebar:not(.collapsed) .sidebar-title,
+.sidebar:not(.collapsed) .sidebar-subtitle,
+.sidebar:not(.collapsed) .sidebar-fetch,
+.sidebar:not(.collapsed) .sidebar-monitors {
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.2s ease 0.1s;
+}
+
+/* Toggle */
+.sidebar-toggle {
+    position: absolute;
+    top: 50%;
+    right: -13px;
+    transform: translateY(-50%);
+    width: 26px;
+    height: 26px;
+    background: var(--surface);
+    border: 1px solid var(--border-2);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    z-index: 101;
+    font-size: 12px;
+    color: var(--muted);
+    box-shadow: var(--shadow-xs);
+    transition: background 0.15s, color 0.15s,
+                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.15s;
+}
+.sidebar-toggle:hover {
+    background: var(--accent-light);
+    color: var(--accent-deep);
+    box-shadow: var(--shadow-sm);
+}
+.sidebar.collapsed .sidebar-toggle { transform: translateY(-50%) rotate(180deg); }
+
+.main { transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+body.sidebar-collapsed .main { margin-left: 56px; }
+
+/* Brand */
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 22px 18px 18px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+.seal {
+    width: 34px;
+    height: 34px;
+    background: var(--accent-light);
+    border-radius: var(--radius-sm);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--accent-deep);
+    flex-shrink: 0;
+    border: 1px solid var(--accent-soft);
+}
+.sidebar-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    white-space: nowrap;
+}
+.sidebar-subtitle {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 1px;
+    white-space: nowrap;
+}
+
+/* Fetch controls */
+.sidebar-fetch {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+.sec-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    color: var(--muted-2);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+.field { margin-bottom: 12px; }
+.field:last-of-type { margin-bottom: 0; }
+.field-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 5px;
+}
+
+/* Segmented switch */
+.switch {
+    display: inline-flex;
+    background: var(--surface-3);
+    border-radius: var(--radius-pill);
+    padding: 3px;
+    gap: 2px;
+    width: 100%;
+    border: 1px solid var(--border);
+}
+.switch button {
+    flex: 1;
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 6px 0;
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+}
+.switch button.active {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-xs);
+    font-weight: 600;
+}
+
+.mode-body { display: none; margin-top: 10px; }
+.mode-body.active { display: block; }
+.date-row { display: flex; flex-direction: column; gap: 8px; }
+
+/* Inputs */
+.text-input, .num-input, .date-input {
+    width: 100%;
+    font-family: var(--font);
+    font-size: 12px;
+    color: var(--ink);
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    outline: none;
+}
+.text-input::placeholder { color: var(--muted-2); }
+.text-input:focus, .num-input:focus, .date-input:focus {
+    background: var(--surface);
+    border-color: var(--accent-soft);
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.4; cursor: pointer; }
+
+/* Buttons */
+.fetch-btn {
+    width: 100%;
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--surface);
+    background: var(--ink);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 10px;
+    margin-top: 12px;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.01em;
+    box-shadow: 0 2px 8px rgba(35, 43, 35, 0.2);
+}
+.fetch-btn:hover { background: var(--ink-2); box-shadow: 0 4px 14px rgba(35, 43, 35, 0.25); }
+.fetch-btn:disabled { background: var(--surface-4); color: var(--muted-2); box-shadow: none; cursor: not-allowed; }
+
+.clear-btn {
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--border-2);
+    border-radius: var(--radius-pill);
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.clear-btn:hover { color: var(--danger); border-color: var(--danger); background: var(--danger-light); }
+
+.status {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--muted);
+    min-height: 16px;
+    display: flex;
+    align-items: center;
+    line-height: 1.4;
+}
+.status.error { color: var(--danger); }
+
+/* Monitors */
+.sidebar-monitors {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.sidebar-monitors::-webkit-scrollbar { width: 3px; }
+.sidebar-monitors::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+
+.id-add { display: flex; gap: 6px; }
+.id-add .text-input { flex: 1; }
+
+.add-btn {
+    font-family: var(--font);
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--accent-deep);
+    background: var(--accent-light);
+    border: 1px solid var(--accent-soft);
+    border-radius: var(--radius-sm);
+    padding: 0 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1;
+}
+.add-btn:hover { background: var(--accent-soft); }
+.add-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.monitor-list { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+
+.monitor-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 11px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: background 0.12s, border-color 0.12s, box-shadow 0.12s;
+    cursor: pointer;
+}
+.monitor-item:hover {
+    background: var(--accent-light);
+    border-color: var(--accent-soft);
+    box-shadow: var(--shadow-xs);
+}
+.monitor-avatar {
+    width: 28px;
+    height: 28px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-deep);
+    flex-shrink: 0;
+    border: 1.5px solid var(--accent-soft);
+}
+.monitor-info { flex: 1; min-width: 0; }
+.monitor-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.monitor-id { font-size: 10px; color: var(--muted); margin-top: 1px; font-family: var(--font-mono); }
+.monitor-loading { font-size: 10px; color: var(--muted-2); font-style: italic; }
+
+.monitor-del {
+    width: 20px;
+    height: 20px;
+    border: none;
+    background: transparent;
+    color: var(--muted-2);
+    font-size: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: color 0.12s, background 0.12s;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+}
+.monitor-del:hover { color: var(--danger); background: var(--danger-light); }
+
+.monitor-empty {
+    font-size: 11px;
+    color: var(--muted-2);
+    text-align: center;
+    padding: 28px 0;
+}
+
+/* ===== MAIN ===== */
+.main {
+    margin-left: var(--sidebar-w);
+    padding: 14px 28px 28px;
+    min-height: 100vh;
+}
+
+/* ===== VIEW SWITCH ===== */
+.view-switch {
+    display: inline-flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+    gap: 2px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-xs);
+    position: sticky;
+    top: 12px;
+    z-index: 50;
+}
+.view-switch button {
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 20px;
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+}
+.view-switch button.active {
+    background: var(--ink);
+    color: var(--surface);
+    box-shadow: 0 2px 6px rgba(35,43,35,0.18);
+    font-weight: 600;
+}
+.view-switch button:not(.active):hover { background: var(--surface-3); color: var(--ink); }
+
+/* ===== RESULTS ===== */
+.results { display: none; }
+.results.show { display: block; }
+
+/* ===== FETCH LOADING ===== */
+#fetchLoading {
+    display: none;
+    text-align: center;
+    padding: 48px 0 40px;
+    color: var(--muted);
+    font-size: 13px;
+    pointer-events: none;
+}
+#fetchLoading.show { display: block; }
+.fetch-spinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--accent-soft);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin360 0.75s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.result-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+.result-tab {
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-2);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 6px 18px;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: var(--shadow-xs);
+}
+.result-tab:hover { border-color: var(--accent-soft); color: var(--accent-deep); }
+.result-tab.active {
+    background: var(--ink);
+    color: var(--surface);
+    border-color: var(--ink);
+    box-shadow: 0 2px 8px rgba(35,43,35,0.18);
+    font-weight: 600;
+}
+.result-tab.failed { color: var(--danger); border-color: rgba(184,92,92,0.3); }
+.result-tab.failed.active { background: var(--danger); color: var(--surface); border-color: var(--danger); }
+
+.result-panel { animation: fade-in 0.22s ease; }
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* User bar */
+.user-bar {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 16px 20px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-xs);
+}
+.user-bar .name { font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
+.user-bar .stat { font-size: 12px; color: var(--muted); }
+.user-bar .stat b { color: var(--ink); font-weight: 600; }
+
+/* Table */
+.table-scroll {
+    overflow-x: auto;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+}
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+thead th {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+    white-space: nowrap;
+}
+thead th:first-child { border-radius: var(--radius) 0 0 0; }
+thead th:last-child  { border-radius: 0 var(--radius) 0 0; }
+
+tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--surface-3);
+    vertical-align: top;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background 0.1s; }
+tbody tr:hover { background: var(--surface-2); }
+
+.col-time { font-size: 11px; white-space: nowrap; color: var(--muted); font-family: var(--font-mono); }
+.col-content { min-width: 260px; max-width: 400px; line-height: 1.65; color: var(--ink-2); }
+.col-summary { min-width: 180px; max-width: 300px; display: flex; flex-direction: column; gap: 5px; }
+
+.sum-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent-deep);
+    background: var(--accent-light);
+    border: 1px solid var(--accent-soft);
+    padding: 2px 9px;
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.02em;
+    align-self: flex-start;
+    margin-bottom: 3px;
+}
+.sum-models { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.sum-one { font-size: 12px; line-height: 1.5; color: var(--muted); margin-top: 3px; }
+.sum-loading {
+    font-size: 11px;
+    color: var(--muted-2);
+    font-style: italic;
+    animation: blink 1.4s infinite ease-in-out;
+}
+.sum-fabe {
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--ink-2);
+    white-space: pre-wrap;
+    background: var(--surface-3);
+    padding: 7px 11px;
+    margin-top: 3px;
+    border-left: 3px solid var(--accent-soft);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* Metrics */
+.metrics { display: flex; flex-direction: column; gap: 7px; min-width: 110px; }
+.metric {
+    display: grid;
+    grid-template-columns: 14px 1fr auto;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+}
+.metric .ico { font-size: 11px; text-align: center; opacity: 0.55; }
+.metric .bar {
+    height: 4px;
+    background: var(--surface-4);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+.metric .bar span { display: block; height: 100%; border-radius: var(--radius-pill); }
+.metric.up .bar span  { background: #C87070; }
+.metric.fwd .bar span { background: var(--amber); }
+.metric.cmt .bar span { background: var(--accent); }
+.metric .val { font-weight: 600; white-space: nowrap; color: var(--ink-2); }
+
+.col-link a { font-size: 11px; color: var(--accent-deep); text-decoration: none; font-weight: 500; }
+.col-link a:hover { text-decoration: underline; }
+
+.new-badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--surface);
+    background: var(--accent);
+    padding: 2px 6px;
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+tbody tr.row-new { background: var(--accent-light); }
+tbody tr.row-new:hover { background: #D8EDD8; }
+
+.spinner {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin-right: 7px;
+    animation: blink 1s infinite ease-in-out;
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.2; transform: scale(0.5); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .spinner, .result-panel { animation: none; }
+    html { scroll-behavior: auto; }
+}
+
+/* ===== COMPARE VIEW ===== */
+.compare-view { display: none; overflow: visible; }
+.compare-view.show { display: block; overflow: visible; }
+#compareContent { padding: 0 !important; text-align: left !important; }
+
+.compare-refresh-btn, .compare-inline-btn {
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--surface);
+    background: var(--ink);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 10px 22px;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s;
+    box-shadow: 0 2px 8px rgba(35,43,35,0.18);
+}
+.compare-refresh-btn:hover, .compare-inline-btn:hover { background: var(--ink-2); }
+.compare-refresh-btn:disabled, .compare-inline-btn:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
+
+.compare-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+.compare-title-row h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+}
+.compare-title-meta { font-size: 12px; color: var(--muted); margin-left: 10px; }
+.compare-title-refresh {
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: var(--shadow-xs);
+}
+.compare-title-refresh:hover {
+    color: var(--accent-deep);
+    border-color: var(--accent-soft);
+    background: var(--accent-light);
+}
+.compare-title-refresh:disabled { opacity: 0.4; cursor: not-allowed; }
+.compare-title-refresh.loading .spin { animation: spin360 0.7s linear infinite; }
+@keyframes spin360 { to { transform: rotate(360deg); } }
+
+/* Compare grid */
+.compare-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+}
+.compare-table { display: grid; min-width: 100%; }
+
+.compare-col-head {
+    position: sticky;
+    top: 0;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+    z-index: 2;
+    width: 280px; min-width: 280px; max-width: 280px;
+    user-select: none;
+}
+.compare-col-head.date-head {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background: var(--surface-2);
+    width: 110px; min-width: 110px; max-width: 110px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+.compare-col-head.drag-over { background: var(--accent-light); color: var(--accent-deep); }
+.compare-col-head.dragging { opacity: 0.35; }
+
+.cmp-drag-handle {
+    display: inline-block;
+    cursor: grab;
+    margin-right: 6px;
+    color: var(--muted-2);
+    font-size: 10px;
+    vertical-align: middle;
+}
+.cmp-drag-handle:active { cursor: grabbing; }
+
+.compare-row { display: contents; }
+.compare-cell {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--surface-3);
+    vertical-align: top;
+    width: 280px; min-width: 280px; max-width: 280px;
+}
+.compare-cell.date-cell {
+    position: sticky;
+    left: 0;
+    background: var(--surface);
+    z-index: 1;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-2);
+    white-space: nowrap;
+    width: 110px; min-width: 110px; max-width: 110px;
+    border-right: 1px solid var(--border);
+    font-family: var(--font-mono);
+}
+.compare-cell.brand-cell { background: var(--surface); }
+.compare-row:last-child .compare-cell { border-bottom: none; }
+
+/* Compare cards */
+.cmp-card {
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s, box-shadow 0.12s;
+}
+.cmp-card:last-child { margin-bottom: 0; }
+.cmp-card:hover { background: var(--accent-light); border-color: var(--accent-soft); box-shadow: var(--shadow-xs); }
+
+.cmp-card-type {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent-deep);
+    background: var(--accent-light);
+    border: 1px solid var(--accent-soft);
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    margin-bottom: 5px;
+}
+.cmp-card-product {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.cmp-card-features {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+    white-space: pre-line;
+    word-break: break-all;
+    overflow: hidden;
+    max-height: 4.8em;
+    transition: max-height 0.2s ease;
+}
+.cmp-card.expanded .cmp-card-features { max-height: none; }
+.cmp-card-expand-hint { font-size: 10px; color: var(--accent-deep); margin-top: 3px; font-weight: 500; }
+.cmp-card.expanded .cmp-card-expand-hint { display: none; }
+.cmp-card-one { font-size: 11px; color: var(--ink-2); margin-top: 5px; line-height: 1.5; font-style: italic; }
+.cmp-empty { color: var(--muted-2); font-size: 12px; text-align: center; padding: 18px 0; }
+.compare-loading { text-align: center; padding: 60px; color: var(--muted); font-size: 13px; }
+.cmp-chart-wrap { min-height: 40px; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 860px) { :root { --sidebar-w: 250px; } }
+@media (max-width: 640px) {
+    .sidebar { position: static; width: 100%; height: auto; box-shadow: none; border-bottom: 1px solid var(--border); }
+    .main { margin-left: 0; padding: 16px; }
+    .sidebar-monitors { max-height: 220px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar" id="sidebar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="收起/展开">‹</button>
+    <div class="sidebar-logo">
+        <span class="seal">F</span>
+        <div>
+            <div class="sidebar-title">FollowWeiboPost</div>
+            <div class="sidebar-subtitle">监控分析微博帖子</div>
+        </div>
+    </div>
+
+    <div class="sidebar-fetch">
+        <div class="sec-label">获取设置</div>
+        <div class="field">
+            <span class="field-label">帖子范围</span>
+            <div class="switch" role="tablist" aria-label="帖子范围">
+                <button id="tabDate" type="button" role="tab" aria-selected="false">按时间</button>
+                <button id="tabCount" type="button" role="tab" aria-selected="true" class="active">按数量</button>
+            </div>
+            <div class="mode-body" id="bodyDate">
+                <div class="date-row">
+                    <div class="field">
+                        <label class="field-label" for="sinceDate">起始日期</label>
+                        <input class="date-input" id="sinceDate" type="date">
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="endDate">结束日期</label>
+                        <input class="date-input" id="endDate" type="date">
+                    </div>
+                </div>
+            </div>
+            <div class="mode-body active" id="bodyCount">
+                <label class="field-label" for="limit">帖子数量</label>
+                <input class="num-input" id="limit" type="number" min="1" max="200" value="10">
+            </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:12px;">
+            <button class="fetch-btn" id="fetchBtn" type="button" style="margin-top:0;flex:1;">获取帖子</button>
+            <button class="clear-btn" id="clearBtn" type="button" title="清除服务端缓存">清除</button>
+        </div>
+        <div class="status" id="status" role="status" aria-live="polite" aria-atomic="true"></div>
+    </div>
+
+    <div class="sidebar-monitors">
+        <div class="sec-label">监控对象</div>
+        <div class="id-add">
+            <input class="text-input" id="idInput" type="text" inputmode="numeric"
+                placeholder="用户 ID" autocomplete="off" aria-label="微博用户 ID">
+            <button class="add-btn" id="addBtn" type="button">＋</button>
+        </div>
+        <div class="monitor-list" id="monitorList"></div>
+    </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<main class="main">
+    <div class="view-switch" role="tablist" aria-label="视图切换">
+        <button id="viewFeed" type="button" class="active" role="tab" aria-selected="true">帖子列表</button>
+        <button id="viewCompare" type="button" role="tab" aria-selected="false">竞品对比</button>
+    </div>
+
+    <div id="fetchLoading" aria-live="polite" aria-label="加载中">
+        <span class="fetch-spinner" aria-hidden="true"></span>获取中，请稍候…
+    </div>
+    <section class="results" id="results" aria-live="polite"></section>
+
+    <section class="compare-view" id="compareView">
+        <div id="compareContent" style="padding:0;"></div>
+    </section>
+</main>
+
+<script>
+    const $ = id => document.getElementById(id);
+
+    const STORE_KEY = 'weibo_monitor_ids';
+    let monitors = [];
+
+    function loadMonitors() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(STORE_KEY));
+            if (Array.isArray(saved)) monitors = saved.filter(m => m && m.id);
+        } catch (e) { monitors = []; }
+        if (monitors.length === 0) monitors = [{ id: '1809745371', name: '' }];
+    }
+
+    function saveMonitors() {
+        try { localStorage.setItem(STORE_KEY, JSON.stringify(monitors)); } catch (e) {}
+    }
+
+    function renderMonitors() {
+        const box = $('monitorList');
+        if (monitors.length === 0) {
+            box.innerHTML = '<div class="monitor-empty">添加监控对象</div>';
+            return;
+        }
+        box.innerHTML = monitors.map((m, i) => {
+            const initial = m.name ? m.name[0] : '?';
+            const nameHtml = m.name
+                ? '<div class="monitor-name">' + esc(m.name) + '</div><div class="monitor-id">' + esc(m.id) + '</div>'
+                : '<div class="monitor-name">' + esc(m.id) + '</div><div class="monitor-loading">加载中…</div>';
+            return '<div class="monitor-item">' +
+                '<div class="monitor-avatar">' + esc(initial) + '</div>' +
+                '<div class="monitor-info">' + nameHtml + '</div>' +
+                '<button class="monitor-del" type="button" data-i="' + i + '" aria-label="删除 ' + esc(m.name || m.id) + '">×</button>' +
+                '</div>';
+        }).join('');
+        box.querySelectorAll('.monitor-del').forEach(btn => {
+            btn.addEventListener('click', () => {
+                monitors.splice(Number(btn.dataset.i), 1);
+                saveMonitors(); renderMonitors();
+            });
+        });
+    }
+
+    async function fetchUserName(id) {
+        try {
+            const resp = await fetch('/api/user_info?user_id=' + encodeURIComponent(id));
+            const data = await resp.json();
+            if (data.success && data.user && data.user.nickname) return data.user.nickname;
+        } catch (e) {}
+        return '';
+    }
+
+    async function addMonitor() {
+        const input = $('idInput');
+        const val = input.value.trim();
+        const statusEl = $('status');
+        statusEl.className = 'status';
+        if (!val) return;
+        if (!/^\d+$/.test(val)) { statusEl.textContent = 'ID 应为纯数字'; statusEl.className = 'status error'; return; }
+        if (monitors.find(m => m.id === val)) {
+            statusEl.textContent = 'ID ' + val + ' 已在列表中';
+            statusEl.className = 'status error';
+            input.value = ''; return;
+        }
+        const addBtn = $('addBtn');
+        addBtn.disabled = true;
+        input.value = '';
+        monitors.push({ id: val, name: '' });
+        saveMonitors(); renderMonitors();
+        const name = await fetchUserName(val);
+        const idx = monitors.findIndex(m => m.id === val);
+        if (idx !== -1) { monitors[idx].name = name; saveMonitors(); renderMonitors(); }
+        addBtn.disabled = false;
+        input.focus();
+    }
+
+    async function fillMissingNames() {
+        const needFill = monitors.filter(m => !m.name);
+        for (const m of needFill) {
+            const name = await fetchUserName(m.id);
+            const idx = monitors.findIndex(x => x.id === m.id);
+            if (idx !== -1) monitors[idx].name = name;
+        }
+        saveMonitors(); renderMonitors();
+    }
+
+    $('addBtn').addEventListener('click', addMonitor);
+    $('idInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addMonitor(); } });
+
+    const tabDate = $('tabDate'), tabCount = $('tabCount');
+    const bodyDate = $('bodyDate'), bodyCount = $('bodyCount');
+    let mode = 'count';
+
+    function setMode(next) {
+        mode = next;
+        const isDate = next === 'date';
+        tabDate.classList.toggle('active', isDate);
+        tabCount.classList.toggle('active', !isDate);
+        tabDate.setAttribute('aria-selected', String(isDate));
+        tabCount.setAttribute('aria-selected', String(!isDate));
+        bodyDate.classList.toggle('active', isDate);
+        bodyCount.classList.toggle('active', !isDate);
+    }
+    tabDate.addEventListener('click', () => setMode('date'));
+    tabCount.addEventListener('click', () => setMode('count'));
+
+    function esc(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function fmtNum(n) {
+        n = Number(n) || 0;
+        if (n >= 10000) return (n / 10000).toFixed(1) + '万';
+        return String(n);
+    }
+
+    function metricRow(cls, ico, val, max) {
+        const pct = max > 0 ? Math.max(4, Math.round((Number(val) || 0) / max * 100)) : 4;
+        return '<div class="metric ' + cls + '">' +
+            '<span class="ico">' + ico + '</span>' +
+            '<span class="bar"><span style="width:' + pct + '%"></span></span>' +
+            '<span class="val">' + fmtNum(val) + '</span></div>';
+    }
+
+    function renderSummary(s) {
+        if (!s) return '—';
+        const lines = [];
+        if (s.type) lines.push('<span class="sum-tag">' + esc(s.type) + '</span>');
+        if (s.models && s.models.length) lines.push('<span class="sum-models">' + s.models.map(esc).join(' · ') + '</span>');
+        if (s.features) lines.push('<div class="sum-fabe">' + esc(s.features) + '</div>');
+        else if (s.fabe) lines.push('<div class="sum-fabe">' + esc(s.fabe) + '</div>');
+        if (s.slogan) lines.push('<div class="sum-fabe" style="border-left-color:var(--amber);color:var(--amber);">' + esc(s.slogan) + '</div>');
+        if (s.one_line) lines.push('<span class="sum-one">' + esc(s.one_line) + '</span>');
+        return lines.length ? lines.join('') : '—';
+    }
+
+    function buildBlock(reqId, data) {
+        const u = (data && data.user) || {};
+        const ws = (data && data.weibos) || [];
+        const newCount = data ? (data.new_count || 0) : 0;
+        const totalCount = data ? (data.count || 0) : 0;
+        const countLabel = newCount > 0
+            ? '新增 <b style="color:var(--accent)">' + newCount + '</b> / 共 <b>' + totalCount + '</b> 条'
+            : '共 <b>' + totalCount + '</b> 条';
+        let body;
+        if (ws.length === 0) {
+            body = '<p style="margin:10px 4px;font-size:13px;color:var(--muted);">未获取到原创帖子。</p>';
+        } else {
+            const maxUp  = Math.max(1, ...ws.map(w => Number(w.up_num) || 0));
+            const maxFwd = Math.max(1, ...ws.map(w => Number(w.retweet_num) || 0));
+            const maxCmt = Math.max(1, ...ws.map(w => Number(w.comment_num) || 0));
+            const rows = ws.map((w, wi) => {
+                const isNew = w._is_new === true;
+                const link = w.id ? '<a href="https://weibo.cn/comment/' + esc(w.id) + '" target="_blank" rel="noopener">查看 ↗</a>' : '—';
+                const contentAttr = 'data-content="' + esc(w.content || '') + '" data-weibo-id="' + esc(w.id || '') + '" data-idx="' + wi + '"';
+                const newBadge = isNew ? '<span class="new-badge">NEW</span>' : '';
+                const summaryCell = '<td class="col-summary sum-pending" ' + contentAttr + '><span class="sum-loading">…</span></td>';
+                return '<tr class="' + (isNew ? 'row-new' : '') + '">' +
+                    '<td class="col-time">' + esc(w.publish_time) + '</td>' +
+                    '<td class="col-content">' + newBadge + esc(w.content) + '</td>' +
+                    summaryCell +
+                    '<td><div class="metrics">' +
+                        metricRow('up','♥',w.up_num,maxUp) +
+                        metricRow('fwd','⇄',w.retweet_num,maxFwd) +
+                        metricRow('cmt','●',w.comment_num,maxCmt) +
+                    '</div></td>' +
+                    '<td class="col-link">' + link + '</td></tr>';
+            }).join('');
+            body = '<div class="table-scroll"><table>' +
+                '<thead><tr><th>时间</th><th>内容</th><th>摘要</th><th>互动</th><th>链接</th></tr></thead>' +
+                '<tbody>' + rows + '</tbody></table></div>';
+        }
+        const panel = document.createElement('div');
+        panel.className = 'result-panel';
+        panel.innerHTML = body;
+        return panel;
+    }
+
+    async function fetchOne(reqId) {
+        const payload = { user_id: reqId, mode: mode };
+        if (mode === 'date') {
+            payload.since_date = $('sinceDate').value;
+            payload.end_date = $('endDate').value || 'now';
+        } else {
+            payload.limit = parseInt($('limit').value, 10) || 10;
+        }
+        const resp = await fetch('/api/fetch', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+        const data = await resp.json();
+        if (!resp.ok || !data.success) throw new Error(data.message || '抓取失败');
+        return data;
+    }
+
+    let resultPanels = [];
+
+    function showPanel(idx) {
+        const tabs = $('results').querySelectorAll('.result-tab');
+        resultPanels.forEach((p, i) => {
+            p.node.style.display = (i === idx) ? '' : 'none';
+            if (tabs[i]) { tabs[i].classList.toggle('active', i === idx); tabs[i].setAttribute('aria-selected', String(i === idx)); }
+        });
+    }
+
+    function renderTabsAndPanels() {
+        const results = $('results');
+        results.innerHTML = '';
+        const tabBar = document.createElement('div');
+        tabBar.className = 'result-tabs';
+        tabBar.setAttribute('role', 'tablist');
+        resultPanels.forEach((p, i) => {
+            const t = document.createElement('button');
+            t.type = 'button'; t.setAttribute('role','tab'); t.setAttribute('aria-selected','false');
+            t.className = 'result-tab' + (p.ok ? '' : ' failed');
+            t.textContent = p.label;
+            t.addEventListener('click', () => showPanel(i));
+            tabBar.appendChild(t);
+        });
+        results.appendChild(tabBar);
+        resultPanels.forEach(p => results.appendChild(p.node));
+        results.classList.add('show');
+        if (resultPanels.length) showPanel(0);
+    }
+
+    // 记录每个用户面板已展示的帖子 ID，用于跨批次去重
+    // weiboIds 存在 resultPanels[n].weiboIds (Set) 中
+
+    function _makeSeparatorRow(batchTime) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td colspan="5" style="padding:0;border:none;">' +
+            '<div style="display:flex;align-items:center;gap:10px;margin:10px 16px 6px;opacity:0.55;">' +
+            '<div style="flex:1;height:1px;background:var(--accent-soft);"></div>' +
+            '<span style="font-size:10px;color:var(--muted);white-space:nowrap;font-weight:500;letter-spacing:.04em;">' +
+            '新批次 · ' + batchTime + '</span>' +
+            '<div style="flex:1;height:1px;background:var(--accent-soft);"></div>' +
+            '</div></td>';
+        return tr;
+    }
+
+    function _appendRowsToPanel(panel, newWeibos) {
+        const tbody = panel.node.querySelector('tbody');
+        if (!tbody || newWeibos.length === 0) return;
+        const now = new Date().toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+        tbody.appendChild(_makeSeparatorRow(now));
+        const maxUp  = Math.max(1, ...newWeibos.map(w => Number(w.up_num) || 0));
+        const maxFwd = Math.max(1, ...newWeibos.map(w => Number(w.retweet_num) || 0));
+        const maxCmt = Math.max(1, ...newWeibos.map(w => Number(w.comment_num) || 0));
+        newWeibos.forEach((w, wi) => {
+            const tr = document.createElement('tr');
+            tr.className = 'row-new';
+            const link = w.id ? '<a href="https://weibo.cn/comment/' + esc(w.id) + '" target="_blank" rel="noopener">查看 ↗</a>' : '—';
+            const ca = 'data-content="' + esc(w.content || '') + '" data-weibo-id="' + esc(w.id || '') + '" data-idx="a' + wi + '"';
+            tr.innerHTML =
+                '<td class="col-time">' + esc(w.publish_time) + '</td>' +
+                '<td class="col-content">' + esc(w.content) + '</td>' +
+                '<td class="col-summary sum-pending" ' + ca + '><span class="sum-loading">…</span></td>' +
+                '<td><div class="metrics">' +
+                    metricRow('up','♥',w.up_num,maxUp) +
+                    metricRow('fwd','⇄',w.retweet_num,maxFwd) +
+                    metricRow('cmt','●',w.comment_num,maxCmt) +
+                '</div></td>' +
+                '<td class="col-link">' + link + '</td>';
+            tbody.appendChild(tr);
+            if (w.id) panel.weiboIds.add(w.id);
+        });
+    }
+
+    async function fetchWeibos() {
+        const statusEl = $('status');
+        statusEl.className = 'status';
+        if (monitors.length === 0) { statusEl.textContent = '请先添加监控对象'; statusEl.className = 'status error'; return; }
+        if (mode === 'date' && !$('sinceDate').value) { statusEl.textContent = '请选择起始日期'; statusEl.className = 'status error'; return; }
+
+        const btn = $('fetchBtn');
+        btn.disabled = true;
+        $('fetchLoading').classList.add('show');
+        const targets = monitors.slice();
+        let totalNewCount = 0, failed = 0, panelsAdded = 0;
+        // 记录本次抓取前已激活的 tab 索引，抓完后保持不变
+        const prevActiveIdx = resultPanels.findIndex((p, i) => {
+            const tabs = $('results').querySelectorAll('.result-tab');
+            return tabs[i] && tabs[i].classList.contains('active');
+        });
+
+        for (let i = 0; i < targets.length; i++) {
+            const m = targets[i];
+            statusEl.innerHTML = '<span class="spinner" aria-hidden="true"></span>' +
+                esc(m.name || m.id) + ' (' + (i+1) + '/' + targets.length + ')';
+            try {
+                const data = await fetchOne(m.id);
+                const nickname = (data.user && data.user.nickname) || m.name || ('ID ' + m.id);
+                const midx = monitors.findIndex(x => x.id === m.id);
+                if (midx !== -1 && data.user && data.user.nickname) monitors[midx].name = data.user.nickname;
+
+                const existing = resultPanels.find(p => p.id === m.id);
+                if (existing) {
+                    // 追加模式：过滤已展示的帖子
+                    const allWeibos = data.weibos || [];
+                    const deduped = allWeibos.filter(w => !w.id || !existing.weiboIds.has(w.id));
+                    if (deduped.length > 0) {
+                        _appendRowsToPanel(existing, deduped);
+                        totalNewCount += deduped.length;
+                        existing.newCount = deduped.length;
+                    } else {
+                        existing.newCount = 0;
+                    }
+                    const total = existing.weiboIds.size;
+                    existing.label = deduped.length > 0
+                        ? nickname + ' (+' + deduped.length + '/' + total + ')'
+                        : nickname + ' (' + total + ')';
+                } else {
+                    // 新面板
+                    const ws = data.weibos || [];
+                    const weiboIds = new Set(ws.map(w => w.id).filter(Boolean));
+                    const newCount = data.new_count || 0;
+                    const totalCnt = data.count || 0;
+                    const tabLabel = newCount > 0
+                        ? nickname + ' (+' + newCount + '/' + totalCnt + ')'
+                        : nickname + ' (' + totalCnt + ')';
+                    resultPanels.push({ id: m.id, label: tabLabel, newCount, ok: true, node: buildBlock(m.id, data), weiboIds });
+                    totalNewCount += totalCnt;
+                    panelsAdded++;
+                }
+            } catch (e) {
+                failed++;
+                if (!resultPanels.find(p => p.id === m.id)) {
+                    const node = document.createElement('div');
+                    node.className = 'result-panel';
+                    node.innerHTML = '<div class="user-bar"><span class="name">' + esc(m.name || m.id) + '</span>' +
+                        '<span class="stat" style="color:var(--danger)">失败：' + esc(e.message) + '</span></div>';
+                    resultPanels.push({ id: m.id, label: (m.name || m.id) + ' (失败)', ok: false, node, weiboIds: new Set() });
+                    panelsAdded++;
+                }
+            }
+        }
+
+        saveMonitors(); renderMonitors();
+
+        // 重建 tab 栏（不销毁面板节点），追加新面板节点到 DOM
+        const results = $('results');
+        const oldTabBar = results.querySelector('.result-tabs');
+        if (oldTabBar) oldTabBar.remove();
+        const tabBar = document.createElement('div');
+        tabBar.className = 'result-tabs';
+        tabBar.setAttribute('role', 'tablist');
+        resultPanels.forEach((p, i) => {
+            const t = document.createElement('button');
+            t.type = 'button'; t.setAttribute('role', 'tab'); t.setAttribute('aria-selected', 'false');
+            t.className = 'result-tab' + (p.ok ? '' : ' failed');
+            t.textContent = p.label;
+            t.addEventListener('click', () => showPanel(i));
+            tabBar.appendChild(t);
+            if (!results.contains(p.node)) results.appendChild(p.node);
+        });
+        results.insertBefore(tabBar, results.firstChild);
+        results.classList.add('show');
+        // 恢复之前激活的 tab，若是首次则激活第一个
+        showPanel(prevActiveIdx >= 0 ? prevActiveIdx : 0);
+
+        let msg = targets.length + ' 个监控对象';
+        if (totalNewCount > 0) msg += '，新增 ' + totalNewCount + ' 条';
+        if (failed > 0) msg += '，' + failed + ' 个失败';
+        statusEl.textContent = msg;
+        statusEl.className = failed > 0 ? 'status error' : 'status';
+        $('fetchLoading').classList.remove('show');
+        btn.disabled = false;
+        loadAllSummaries();
+    }
+
+    async function clearCache() {
+        const btn = $('clearBtn');
+        btn.disabled = true;
+        try {
+            await fetch('/api/cache/clear', { method:'POST', headers:{'Content-Type':'application/json'}, body:'{}' });
+            $('status').textContent = '缓存已清除'; $('status').className = 'status';
+        } catch (e) { $('status').textContent = '清缓存失败：' + e.message; $('status').className = 'status error'; }
+        btn.disabled = false;
+    }
+
+    async function loadSummaryForCell(td) {
+        const content = td.getAttribute('data-content');
+        const weiboId = td.getAttribute('data-weibo-id') || '';
+        if (!content) { td.innerHTML = '—'; return; }
+        try {
+            const resp = await fetch('/api/summary', {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ content, weibo_id: weiboId }),
+            });
+            const data = await resp.json();
+            td.innerHTML = (data.success && data.summary) ? renderSummary(data.summary) : '<span style="color:var(--muted-2);font-size:11px;">—</span>';
+        } catch (e) { td.innerHTML = '<span style="color:var(--muted-2);font-size:11px;">—</span>'; }
+    }
+
+    function loadAllSummaries() {
+        document.querySelectorAll('.sum-pending').forEach(td => { td.classList.remove('sum-pending'); loadSummaryForCell(td); });
+    }
+
+    const viewFeedBtn = $('viewFeed'), viewCompareBtn = $('viewCompare');
+    const resultsEl = $('results'), compareViewEl = $('compareView');
+
+    function setView(v) {
+        const isFeed = v === 'feed';
+        viewFeedBtn.classList.toggle('active', isFeed);
+        viewCompareBtn.classList.toggle('active', !isFeed);
+        viewFeedBtn.setAttribute('aria-selected', String(isFeed));
+        viewCompareBtn.setAttribute('aria-selected', String(!isFeed));
+        resultsEl.style.display = isFeed ? '' : 'none';
+        compareViewEl.classList.toggle('show', !isFeed);
+    }
+    viewFeedBtn.addEventListener('click', () => setView('feed'));
+    viewCompareBtn.addEventListener('click', () => { setView('compare'); fetchCompare(); });
+
+    function renderCompareCard(post) {
+        const s = post.summary || {};
+        const typeHtml = s.type ? '<span class="cmp-card-type">' + esc(s.type) + '</span>' : '';
+        const productHtml = s.models && s.models.length
+            ? '<div class="cmp-card-product">' + s.models.map(esc).join(' · ') + '</div>'
+            : (s.type ? '' : '<div class="cmp-card-product" style="color:var(--muted);">' + esc((post.content||'').slice(0,30)) + '…</div>');
+        let featuresHtml = '';
+        if (s.features) {
+            const lines = s.features.replace(/；/g,'\n').replace(/;/g,'\n').trim().split('\n').filter(l=>l.trim());
+            const hasMore = lines.length > 2;
+            featuresHtml = '<div class="cmp-card-features">' + lines.map(l=>esc(l.trim())).join('<br>') + '</div>' +
+                (hasMore ? '<div class="cmp-card-expand-hint">展开 ▾</div>' : '');
+        }
+        const oneLineHtml = s.one_line ? '<div class="cmp-card-one">' + esc(s.one_line) + '</div>'
+            : (!s.features ? '<div class="cmp-card-features">' + esc((post.content||'').slice(0,60)) + '…</div>' : '');
+        return '<div class="cmp-card" onclick="this.classList.toggle(\'expanded\')">' + typeHtml + productHtml + featuresHtml + oneLineHtml + '</div>';
+    }
+
+    const _CHART_COLORS = ['#7AA87A','#C87070','#A87E3A','#5A8AB8','#9A78B0','#5A9A8A','#C8804A','#7A8A9A'];
+
+    function buildPostChartSvg(data, brands) {
+        // 固定显示最近 10 天，正序排列（最早左，最新右）
+        const SHOW_DAYS = 10;
+        const allDates = data.dates ? [...data.dates].reverse() : [];
+        const dates = allDates.slice(-SHOW_DAYS);
+        if (dates.length === 0 || brands.length === 0) return null;
+
+        // 用 viewBox 坐标系：固定 1000 × svgH，内部均匀分配列宽
+        const VB_W = 1000;
+        const PAD_L = 20, PAD_R = 20, PAD_T = 14, PAD_B = 10, H = 56, LEGEND_ROW = 22;
+        const svgH = PAD_T + H + PAD_B + LEGEND_ROW;
+
+        // 每列中心 x，均匀分布
+        const colCount = SHOW_DAYS; // 固定 10 列（数据不足时按实际列数）
+        const actualCols = dates.length;
+        const slotW = (VB_W - PAD_L - PAD_R) / colCount;
+        const BAR_W = slotW * 0.55;
+
+        const counts = {}; let maxTotal = 1;
+        dates.forEach(d => {
+            counts[d] = {}; let total = 0;
+            brands.forEach(b => {
+                const arr = data.grid && data.grid[d] && data.grid[d][String(b.id)];
+                const cnt = arr ? arr.length : 0;
+                counts[d][String(b.id)] = cnt; total += cnt;
+            });
+            if (total > maxTotal) maxTotal = total;
+        });
+
+        let rects = '', labels = '', xlabels = '';
+        dates.forEach((d, di) => {
+            // 数据不足 10 条时右对齐（空出左侧）
+            const colIdx = colCount - actualCols + di;
+            const cx = PAD_L + colIdx * slotW + slotW / 2;
+            const bx = cx - BAR_W / 2;
+            let yOffset = PAD_T + H;
+            brands.forEach((b, bi) => {
+                const cnt = counts[d][String(b.id)] || 0;
+                if (cnt === 0) return;
+                const segH = Math.max(5, Math.round(cnt / maxTotal * H));
+                yOffset -= segH;
+                const color = _CHART_COLORS[bi % _CHART_COLORS.length];
+                rects += '<rect x="' + bx.toFixed(1) + '" y="' + yOffset + '" width="' + BAR_W.toFixed(1) + '" height="' + segH + '" fill="' + color + '" rx="3" fill-opacity="0.85"/>';
+                if (segH >= 13) labels += '<text x="' + cx.toFixed(1) + '" y="' + (yOffset + segH/2 + 4) + '" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">' + cnt + '</text>';
+            });
+            xlabels += '<text x="' + cx.toFixed(1) + '" y="' + (PAD_T + H + 14) + '" text-anchor="middle" font-size="10" fill="#AABDAA">' + d.slice(5) + '</text>';
+        });
+
+        // 图例：均匀横排
+        let legendSvg = '';
+        const legendSlotW = VB_W / Math.max(brands.length, 1);
+        const ly = PAD_T + H + PAD_B + 16;
+        brands.forEach((b, bi) => {
+            const nm = (b.name && b.name !== b.id) ? b.name : b.id;
+            const color = _CHART_COLORS[bi % _CHART_COLORS.length];
+            const lx = bi * legendSlotW + 4;
+            legendSvg += '<rect x="' + lx.toFixed(1) + '" y="' + (ly - 9) + '" width="10" height="10" fill="' + color + '" rx="2"/>';
+            legendSvg += '<text x="' + (lx + 14).toFixed(1) + '" y="' + ly + '" font-size="10" fill="#7A8A7A">' + esc(nm) + '</text>';
+        });
+
+        // viewBox 固定，width="100%" 自适应容器，height 按比例缩放
+        const svg = '<svg xmlns="http://www.w3.org/2000/svg"' +
+            ' viewBox="0 0 ' + VB_W + ' ' + svgH + '"' +
+            ' width="100%" height="auto"' +
+            ' preserveAspectRatio="xMidYMid meet"' +
+            ' style="display:block;font-family:-apple-system,Helvetica,Arial,sans-serif;">' +
+            rects + labels + xlabels + legendSvg + '</svg>';
+
+        const div = document.createElement('div');
+        div.style.cssText = 'background:var(--surface);padding:14px 16px 12px;margin-bottom:16px;' +
+            'border-radius:var(--radius);box-shadow:var(--shadow-xs);overflow:hidden;';
+        div.innerHTML = '<div style="font-size:10px;font-weight:600;color:var(--muted-2);' +
+            'letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;">' +
+            '近 ' + actualCols + ' 天发帖频率</div>' + svg;
+        return div;
+    }
+
+    let compareBrandOrder = [];
+
+    function renderCompare(data) {
+        const container = $('compareContent');
+        if (!data.dates || data.dates.length === 0) {
+            container.innerHTML = '<div class="cmp-empty" style="padding:48px 0;">暂无数据，请先获取帖子。</div>'; return;
+        }
+        data.brands.forEach(b => {
+            if (!b.name || b.name === b.id) { const m = monitors.find(x => String(x.id) === String(b.id)); if (m && m.name) b.name = m.name; }
+        });
+        const incomingIds = data.brands.map(b => b.id);
+        compareBrandOrder = compareBrandOrder.filter(id => incomingIds.includes(id));
+        incomingIds.forEach(id => { if (!compareBrandOrder.includes(id)) compareBrandOrder.push(id); });
+        const brandMap = {}; data.brands.forEach(b => { brandMap[b.id] = b; });
+        const brands = compareBrandOrder.map(id => brandMap[id]).filter(Boolean);
+        const colWidths = ['110px', ...brands.map(() => '280px')].join(' ');
+        const wrap = document.createElement('div'); wrap.className = 'compare-scroll';
+        const table = document.createElement('div'); table.className = 'compare-table';
+        table.style.gridTemplateColumns = colWidths; wrap.appendChild(table);
+        const dateHead = document.createElement('div'); dateHead.className = 'compare-col-head date-head'; dateHead.textContent = '日期'; table.appendChild(dateHead);
+        brands.forEach(b => {
+            const head = document.createElement('div');
+            head.className = 'compare-col-head'; head.draggable = true; head.dataset.bid = b.id;
+            const mon = monitors.find(x => String(x.id) === String(b.id));
+            const displayName = (mon && mon.name) ? mon.name : ((b.name && b.name !== b.id) ? b.name : b.id);
+            head.innerHTML = '<span class="cmp-drag-handle" title="拖拽调整顺序">⠿</span>' + esc(displayName);
+            head.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', b.id); head.classList.add('dragging'); });
+            head.addEventListener('dragend', () => head.classList.remove('dragging'));
+            head.addEventListener('dragover', e => { e.preventDefault(); head.classList.add('drag-over'); });
+            head.addEventListener('dragleave', () => head.classList.remove('drag-over'));
+            head.addEventListener('drop', e => {
+                e.preventDefault(); head.classList.remove('drag-over');
+                const fromId = e.dataTransfer.getData('text/plain'); const toId = b.id;
+                if (fromId === toId) return;
+                const fi = compareBrandOrder.indexOf(fromId), ti = compareBrandOrder.indexOf(toId);
+                if (fi !== -1 && ti !== -1) { compareBrandOrder.splice(fi,1); compareBrandOrder.splice(ti,0,fromId); renderCompare(data); }
+            });
+            table.appendChild(head);
+        });
+        data.dates.forEach(date => {
+            const dateCell = document.createElement('div'); dateCell.className = 'compare-cell date-cell'; dateCell.textContent = date; table.appendChild(dateCell);
+            brands.forEach(b => {
+                const cell = document.createElement('div'); cell.className = 'compare-cell brand-cell';
+                const posts = (data.grid[date] && data.grid[date][b.id]) || [];
+                cell.innerHTML = posts.length === 0 ? '<div class="cmp-empty">—</div>' : posts.map(renderCompareCard).join('');
+                table.appendChild(cell);
+            });
+        });
+        while (container.firstChild) container.removeChild(container.firstChild);
+        container.className = '';
+        container.style.cssText = 'padding:0;text-align:left;';
+        const chartDiv = buildPostChartSvg(data, brands);
+        if (chartDiv) container.appendChild(chartDiv);
+        container.appendChild(wrap);
+    }
+
+    async function fetchCompare() {
+        const btn = $('compareRefreshBtn');
+        if (btn) { btn.disabled = true; btn.classList.add('loading'); }
+        const container = $('compareContent');
+        // 仅在首次加载时显示 loading（已有图表内容则不重置）
+        if (!container.querySelector('.compare-scroll')) {
+            container.className = '';
+            container.style.cssText = 'padding:0;';
+            container.innerHTML = '<div style="padding:20px 0;text-align:center;font-size:12px;color:var(--muted);"><span class="spinner"></span>加载中…</div>';
+        }
+        let url = '/api/compare'; const params = [];
+        if (mode === 'date') {
+            const since = $('sinceDate').value, until = $('endDate').value;
+            if (since) params.push('since=' + encodeURIComponent(since));
+            if (until) params.push('until=' + encodeURIComponent(until));
+        }
+        if (params.length) url += '?' + params.join('&');
+        try {
+            const resp = await fetch(url); const data = await resp.json();
+            if (data.success) {
+                if (data.brands) data.brands.forEach(b => { if (!b.name || b.name === b.id) { const m = monitors.find(x => String(x.id) === String(b.id)); if (m && m.name) b.name = m.name; } });
+                renderCompare(data);
+            } else { $('compareContent').innerHTML = '<div class="cmp-empty" style="color:var(--danger);padding:48px 0;">加载失败</div>'; }
+        } catch (e) { $('compareContent').innerHTML = '<div class="cmp-empty" style="color:var(--danger);padding:48px 0;">请求失败：' + esc(e.message) + '</div>'; }
+        const btnAfter = $('compareRefreshBtn');
+        if (btnAfter) { btnAfter.disabled = false; btnAfter.classList.remove('loading'); }
+    }
+
+    const initRefreshBtn = $('compareRefreshBtn');
+    if (initRefreshBtn) initRefreshBtn.addEventListener('click', fetchCompare);
+
+    $('fetchBtn').addEventListener('click', fetchWeibos);
+    $('clearBtn').addEventListener('click', clearCache);
+
+    const sidebarEl = $('sidebar'), sidebarToggleEl = $('sidebarToggle');
+    const SIDEBAR_KEY = 'weibo_sidebar_collapsed';
+    function setSidebarCollapsed(collapsed) {
+        sidebarEl.classList.toggle('collapsed', collapsed);
+        document.body.classList.toggle('sidebar-collapsed', collapsed);
+        try { localStorage.setItem(SIDEBAR_KEY, collapsed ? '1' : '0'); } catch(e) {}
+    }
+    sidebarToggleEl.addEventListener('click', () => setSidebarCollapsed(!sidebarEl.classList.contains('collapsed')));
+    try { if (localStorage.getItem(SIDEBAR_KEY) === '1') setSidebarCollapsed(true); } catch(e) {}
+
+    loadMonitors(); renderMonitors(); fillMissingNames();
+</script>
+</body>
+</html>

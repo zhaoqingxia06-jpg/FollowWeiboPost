@@ -1,0 +1,150 @@
+2026-06-23 20:05:00,415 - ERROR - config_util.py[:185] - Failed to obtain weibo.cn cookie from Chrome browser: Unable to get key for cookie decryption
+2026-06-23 20:05:00,416 - ERROR - config_util.py[:216] - Check for cookie failed: Unable to get key for cookie decryption
+2026-06-23 20:05:01,282 - ERROR - index_parser.py[:65] - list index out of range
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\index_parser.py", line 60, in get_user_async
+    self.user.weibo_num = string_to_int(user_info[0][3:-1])
+                                        ~~~~~~~~~^^^
+IndexError: list index out of range
+2026-06-23 20:05:01,332 - ERROR - spider.py[:262] - 'NoneType' object has no attribute 'nickname'
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\spider.py", line 246, in _get_filepath
+    dir_name = self.user.nickname
+               ^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'nickname'
+2026-06-23 20:05:01,336 - ERROR - csv_writer.py[:30] - expected str, bytes or os.PathLike object, not NoneType
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\writer\csv_writer.py", line 25, in __init__
+    with open(self.file_path, 'a', encoding='utf-8-sig',
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              newline='') as f:
+              ^^^^^^^^^^^
+TypeError: expected str, bytes or os.PathLike object, not NoneType
+2026-06-23 20:05:01,337 - ERROR - spider.py[:262] - 'NoneType' object has no attribute 'nickname'
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\spider.py", line 246, in _get_filepath
+    dir_name = self.user.nickname
+               ^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'nickname'
+2026-06-23 20:05:01,338 - ERROR - spider.py[:262] - 'NoneType' object has no attribute 'nickname'
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\spider.py", line 246, in _get_filepath
+    dir_name = self.user.nickname
+               ^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'nickname'
+2026-06-23 20:05:01,339 - ERROR - spider.py[:262] - 'NoneType' object has no attribute 'nickname'
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\spider.py", line 246, in _get_filepath
+    dir_name = self.user.nickname
+               ^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'nickname'
+2026-06-23 20:05:01,339 - ERROR - spider.py[:262] - 'NoneType' object has no attribute 'nickname'
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\spider.py", line 246, in _get_filepath
+    dir_name = self.user.nickname
+               ^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'nickname'
+2026-06-23 20:05:01,340 - ERROR - spider.py[:356] - 'NoneType' object has no attribute 'nickname'
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\spider.py", line 339, in get_one_user
+    self.write_user(self.user)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\spider.py", line 141, in write_user
+    writer.write_user(user)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\writer\txt_writer.py", line 29, in write_user
+    [v + '：' + str(getattr(self.user, k)) for k, v in self.user_desc])
+                    ~~~~~~~^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'nickname'
+2026-06-23 20:06:35,337 - ERROR - config_util.py[:185] - Failed to obtain weibo.cn cookie from Chrome browser: Unable to get key for cookie decryption
+2026-06-23 20:06:35,342 - ERROR - config_util.py[:216] - Check for cookie failed: Unable to get key for cookie decryption
+2026-06-23 20:07:03,568 - WARNING - util.py[:137] - 当前账号没有浏览该视频的权限
+2026-06-23 20:07:03,570 - ERROR - page_parser.py[:313] - cannot access local variable 'video_url' where it is not associated with a value
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\page_parser.py", line 311, in get_video_url
+    video_url = to_video_download_url(self.cookie, video_page_url)
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\util.py", line 139, in to_video_download_url
+    return video_url
+           ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'video_url' where it is not associated with a value
+2026-06-23 20:07:11,718 - WARNING - util.py[:137] - 当前账号没有浏览该视频的权限
+2026-06-23 20:07:11,720 - ERROR - page_parser.py[:313] - cannot access local variable 'video_url' where it is not associated with a value
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\page_parser.py", line 311, in get_video_url
+    video_url = to_video_download_url(self.cookie, video_page_url)
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\util.py", line 139, in to_video_download_url
+    return video_url
+           ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'video_url' where it is not associated with a value
+2026-06-23 20:07:17,474 - WARNING - util.py[:137] - 当前账号没有浏览该视频的权限
+2026-06-23 20:07:17,475 - ERROR - page_parser.py[:313] - cannot access local variable 'video_url' where it is not associated with a value
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\page_parser.py", line 311, in get_video_url
+    video_url = to_video_download_url(self.cookie, video_page_url)
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\util.py", line 139, in to_video_download_url
+    return video_url
+           ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'video_url' where it is not associated with a value
+2026-06-23 20:07:21,186 - WARNING - util.py[:137] - 当前账号没有浏览该视频的权限
+2026-06-23 20:07:21,187 - ERROR - page_parser.py[:313] - cannot access local variable 'video_url' where it is not associated with a value
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\page_parser.py", line 311, in get_video_url
+    video_url = to_video_download_url(self.cookie, video_page_url)
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\util.py", line 139, in to_video_download_url
+    return video_url
+           ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'video_url' where it is not associated with a value
+2026-06-23 20:07:51,003 - WARNING - util.py[:137] - 当前账号没有浏览该视频的权限
+2026-06-23 20:07:51,004 - ERROR - page_parser.py[:313] - cannot access local variable 'video_url' where it is not associated with a value
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\page_parser.py", line 311, in get_video_url
+    video_url = to_video_download_url(self.cookie, video_page_url)
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\util.py", line 139, in to_video_download_url
+    return video_url
+           ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'video_url' where it is not associated with a value
+2026-06-23 20:07:55,621 - WARNING - util.py[:137] - 当前账号没有浏览该视频的权限
+2026-06-23 20:07:55,622 - ERROR - page_parser.py[:313] - cannot access local variable 'video_url' where it is not associated with a value
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\page_parser.py", line 311, in get_video_url
+    video_url = to_video_download_url(self.cookie, video_page_url)
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\util.py", line 139, in to_video_download_url
+    return video_url
+           ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'video_url' where it is not associated with a value
+2026-06-23 20:09:04,306 - WARNING - util.py[:137] - 当前账号没有浏览该视频的权限
+2026-06-23 20:09:04,307 - ERROR - page_parser.py[:313] - cannot access local variable 'video_url' where it is not associated with a value
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\page_parser.py", line 311, in get_video_url
+    video_url = to_video_download_url(self.cookie, video_page_url)
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\util.py", line 139, in to_video_download_url
+    return video_url
+           ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'video_url' where it is not associated with a value
+2026-06-23 20:09:04,722 - WARNING - util.py[:137] - 当前账号没有浏览该视频的权限
+2026-06-23 20:09:04,722 - ERROR - page_parser.py[:313] - cannot access local variable 'video_url' where it is not associated with a value
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\page_parser.py", line 311, in get_video_url
+    video_url = to_video_download_url(self.cookie, video_page_url)
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\util.py", line 139, in to_video_download_url
+    return video_url
+           ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'video_url' where it is not associated with a value
+2026-06-23 20:09:05,142 - WARNING - util.py[:137] - 当前账号没有浏览该视频的权限
+2026-06-23 20:09:05,143 - ERROR - page_parser.py[:313] - cannot access local variable 'video_url' where it is not associated with a value
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\page_parser.py", line 311, in get_video_url
+    video_url = to_video_download_url(self.cookie, video_page_url)
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\util.py", line 139, in to_video_download_url
+    return video_url
+           ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'video_url' where it is not associated with a value
+2026-06-23 20:09:17,773 - WARNING - util.py[:137] - 当前账号没有浏览该视频的权限
+2026-06-23 20:09:17,774 - ERROR - page_parser.py[:313] - cannot access local variable 'video_url' where it is not associated with a value
+Traceback (most recent call last):
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\page_parser.py", line 311, in get_video_url
+    video_url = to_video_download_url(self.cookie, video_page_url)
+  File "D:\vibe code\weiboSpider-master\weiboSpider-master\weibo_spider\parser\util.py", line 139, in to_video_download_url
+    return video_url
+           ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'video_url' where it is not associated with a value

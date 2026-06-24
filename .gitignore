@@ -1,0 +1,19 @@
+# 敏感配置（含 cookie 和 API key，绝对不提交）
+config.json
+
+# 运行时缓存数据
+web_app/weibo_cache.json
+web_app/summary_cache.json
+web_app/*.tmp
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
